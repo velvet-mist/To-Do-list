@@ -5,8 +5,8 @@ let spinning = false;
 
 // ── WHEEL ──
 const COLORS = [
-  "rgb(247, 224, 179)",
-  "rgb(249, 240, 228)",
+  "rgb(235, 197, 121)",
+  "rgb(185, 90, 73)",
 ];
 
 function buildWheel() {
