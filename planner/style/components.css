@@ -15,3 +15,236 @@
       ),
       linear-gradient(90deg, hsl(250, 82%, 1%), hsl(250, 82%, 1%));
   } */
+
+/* ── COMPONENTS ──
+   Requires base.css to be loaded first.
+   Import both in every page:
+     <link rel="stylesheet" href="../style/base.css">
+     <link rel="stylesheet" href="../style/components.css">
+*/
+
+/* ── TWO-COLUMN GRID ── */
+.col-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.col-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+/* ── NOTES BLOCK ── */
+.notes-block {
+  background: var(--warm-white);
+  border: 1.5px solid var(--tan);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  min-height: 90px;
+}
+
+.notes-block textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 70px;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--brown);
+  line-height: 1.8;
+  /* dashed line background */
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    var(--tan-light) 27px,
+    var(--tan-light) 28px
+  );
+}
+
+.notes-block textarea::placeholder { color: var(--muted); opacity: 0.6; }
+
+/* ── PHOTO PLACEHOLDER ── */
+.photo-slot {
+  background: var(--tan-light);
+  border: 2px dashed var(--brown-light);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 120px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.photo-slot:hover { background: var(--tan); }
+.photo-slot .icon { font-size: 1.6rem; }
+.photo-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: calc(var(--radius-md) - 2px);
+}
+
+/* ── TABLE ROWS (for music list, travel, etc.) ── */
+.table-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.table-header .col-label {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--brown-mid);
+  text-align: center;
+  background: var(--tan);
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.table-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+
+.table-row .cell {
+  flex: 1;
+  border-bottom: 1.5px dashed var(--brown-light);
+  padding: 4px 4px;
+}
+
+.table-row .cell input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--brown);
+}
+
+.table-row .cell input::placeholder { color: var(--muted); opacity: 0.5; }
+
+.row-number {
+  width: 18px;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── MONTH GRID (yearly planner) ── */
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.month-card {
+  background: var(--warm-white);
+  border: 1.5px solid var(--tan);
+  border-radius: var(--radius-md);
+  padding: 10px;
+}
+
+.month-card .month-name {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--brown);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.month-card .day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.month-card .day {
+  font-size: 0.6rem;
+  text-align: center;
+  padding: 2px 1px;
+  border-radius: 4px;
+  color: var(--brown-mid);
+  cursor: pointer;
+  transition: background 0.15s;
+  line-height: 1.4;
+}
+
+.month-card .day:hover { background: var(--tan); }
+.month-card .day.marked { background: var(--accent); color: white; border-radius: 50%; }
+.month-card .day-header { color: var(--muted); font-weight: 700; cursor: default; }
+.month-card .day-header:hover { background: none; }
+
+/* ── CAFE STOREFONT SVG ── */
+.cafe-storefront {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+/* ── TAG / BADGE ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--tan-light);
+  border: 1.5px solid var(--tan);
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--brown-mid);
+}
+
+/* ── BUTTON ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 8px 18px;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--brown-mid);
+  transition: transform 0.1s, box-shadow 0.1s;
+  letter-spacing: 0.3px;
+}
+
+.btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--brown-mid); }
+.btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--brown-mid); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--brown-mid);
+  border: 2px solid var(--tan);
+  box-shadow: 2px 2px 0 var(--tan);
+}
+.btn-ghost:hover { background: var(--tan-light); }
