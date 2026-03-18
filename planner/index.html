@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>To-Do</h1>
+  <span>stay on track</span>
+</header>
+
+<div class="layout">
+
+  <!-- TODO LIST -->
+  <div class="todo-panel">
+    <div>
+      <div class="section-label">Tasks</div>
+      <div class="add-row">
+        <input type="text" id="todo-input" placeholder="add a task..." />
+        <button onclick="addTodo()">Add</button>
+      </div>
+    </div>
+    <ul class="todo-list" id="todo-list">
+      <li class="empty-state" id="empty-msg">no tasks yet</li>
+    </ul>
+  </div>
+
+  <!-- WHEEL -->
+  <div class="wheel-panel">
+    <div class="section-label">spin for a task</div>
+
+    <div class="wheel-wrap">
+      <div class="wheel-arrow">🡇</div>
+      <div class="wheel" id="wheel"></div>
+      <button id="spin-btn" onclick="spinWheel()">SPIN</button>
+    </div>
+
+    <div class="result-box">
+      <div class="result-label">landed on</div>
+      <div class="result-text" id="result-text">—</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
