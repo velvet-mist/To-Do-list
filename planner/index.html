@@ -123,8 +123,10 @@
     .page-card:hover::before { background: var(--accent); }
 
     .card-icon {
-      font-size: 2rem;
-      line-height: 1;
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+      border-radius: 10px;
     }
 
     .card-name {
@@ -180,11 +182,8 @@
     <h1>My <span>Planner</span></h1>
     <p>A little cafe for your thoughts, tasks, and dreams.</p>
     <div class="hero-illo">
-      <span>🪴</span>
-      <span>🏠</span>
-      <span>☕</span>
-      <span>📖</span>
-      <span>🌿</span>
+    <img class="card-icon" src="/planner/assets/illustration/aesthetic.png" width="1000"  height="200">
+
     </div>
   </div>
 
@@ -192,35 +191,42 @@
   <div class="planner-grid stagger">
 
     <a class="page-card" href="pages/daily.html">
-      <div class="card-icon">📋</div>
+      <img class="card-icon" src="/planner/assets/illustration/i-cherr-ish.png" alt="Daily Planner">
       <div class="card-name">Daily Planner</div>
       <div class="card-desc">Schedule your day, jot notes, and stay on track.</div>
       <span class="card-arrow">→</span>
     </a>
 
     <a class="page-card" href="pages/yearly.html">
-      <div class="card-icon">📅</div>
+      <img class="card-icon" src="/planner/assets/illustration/yearly.png" alt="Yearly Planner">
       <div class="card-name">Yearly Planner</div>
       <div class="card-desc">Bird's-eye view of all 12 months at a glance.</div>
       <span class="card-arrow">→</span>
     </a>
 
     <a class="page-card" href="pages/study.html">
-      <div class="card-icon">✏️</div>
+      <img class="card-icon" src="/planner/assets/illustration/p.png" alt="Study Planner">
       <div class="card-name">Study Planner</div>
       <div class="card-desc">Assignments, class schedule, and important notes.</div>
       <span class="card-arrow">→</span>
     </a>
 
     <a class="page-card" href="pages/music-list.html">
-      <div class="card-icon">🎵</div>
+      <img class="card-icon" src="/planner/assets/illustration/music.png" alt="Music List">
       <div class="card-name">Music List</div>
       <div class="card-desc">Your favourite songs and artists, all in one spot.</div>
       <span class="card-arrow">→</span>
     </a>
 
+    <a class="page-card" href="pages/travel.html">
+      <img class="card-icon" src="/planner/assets/illustration/ice-bear.png" alt="Travel Wishlist">
+      <div class="card-name">Travel Wishlist</div>
+      <div class="card-desc">Places to visit and activities to do someday.</div>
+      <span class="card-arrow">→</span>
+    </a>
+
     <a class="page-card" href="pages/daily-story.html">
-      <div class="card-icon">🌸</div>
+      <img class="card-icon" src="/planner/assets/illustration/angry-typing.png" alt="Daily Story">
       <div class="card-name">Daily Story</div>
       <div class="card-desc">A free-write journal for your everyday moments.</div>
       <span class="card-arrow">→</span>
