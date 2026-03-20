@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Planner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../style/base.css">
+  <link rel="stylesheet" href="../style/components.css">
+  <style>
+    .date-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .date-bar input[type="date"] {
+      background: var(--tan-light);
+      border: 2px solid var(--tan);
+      border-radius: var(--radius-pill);
+      padding: 6px 16px;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--brown);
+      outline: none;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .task-input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .task-input-row input {
+      flex: 1;
+      background: var(--tan-light);
+      border: 1.5px solid var(--tan);
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--brown);
+      outline: none;
+    }
+    .task-input-row input:focus { border-color: var(--accent); }
+    .add-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-pill);
+      width: 28px; height: 28px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-weight: bold;
+      transition: transform 0.1s;
+    }
+    .add-btn:hover { transform: scale(1.1); }
+    .task-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .task-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px;
+      background: var(--warm-white);
+      border: 1.5px solid var(--tan);
+      border-radius: var(--radius-md);
+      animation: fadeUp 0.2s ease;
+    }
+    .task-item input[type="checkbox"] {
+      appearance: none;
+      width: 16px; height: 16px;
+      border: 2px solid var(--brown-light);
+      border-radius: 5px;
+      background: var(--cream-light);
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .task-item input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+    .task-item input[type="checkbox"]:checked::after {
+      content: '✓'; position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      font-size: 9px; color: white; font-weight: bold;
+    }
+    .task-item span { flex: 1; font-size: 0.82rem; }
+    .task-item.done span { text-decoration: line-through; color: var(--muted); }
+    .del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.85rem; opacity: 0; transition: opacity 0.15s; }
+    .task-item:hover .del { opacity: 1; }
+    .del:hover { color: var(--accent); }
+    .schedule-grid { display: flex; flex-direction: column; gap: 5px; }
+    .time-slot {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .time-label {
+      font-family: var(--font-display);
+      font-size: 0.68rem; font-weight: 700;
+      color: var(--muted); width: 38px; flex-shrink: 0;
+      text-align: right;
+    }
+    .time-slot input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px dashed var(--brown-light);
+      padding: 4px 4px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--brown);
+      outline: none;
+    }
+    .time-slot input::placeholder { color: var(--muted); opacity: 0.5; }
+  </style>
+</head>
+<body>
+<div class="page fade-up">
+  <a class="back-nav" href="../index.html">← back</a>
+  <div class="page-header">
+    <div>
+      <h1>📋 Daily Planner</h1>
+      <div class="subtitle">one day at a time</div>
+    </div>
+  </div>
+
+  <div class="date-bar">
+    <span class="pill-label">📅</span>
+    <input type="date" id="today-date">
+  </div>
+
+  <div class="two-col">
+    <!-- TASKS -->
+    <div class="card">
+      <div class="card-title dots">tasks</div>
+      <div class="task-input-row">
+        <input type="text" id="task-input" placeholder="add a task..." onkeydown="if(event.key==='Enter') addTask()">
+        <button class="add-btn" onclick="addTask()">+</button>
+      </div>
+      <ul class="task-list" id="task-list"></ul>
+    </div>
+
+    <!-- NOTES -->
+    <div class="card">
+      <div class="card-title dots">notes</div>
+      <div class="notes-block" style="min-height: 180px;">
+        <textarea placeholder="jot anything down..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 16px;">
+    <div class="card">
+      <div class="card-title dots">schedule</div>
+      <div class="schedule-grid">
+        <div class="time-slot"><span class="time-label">7am</span><input type="text" placeholder="morning routine..."></div>
+        <div class="time-slot"><span class="time-label">8am</span><input type="text" placeholder=""></div>
+        <div class="time-slot"><span class="time-label">9am</span><input type="text" placeholder=""></div>
+        <div class="time-slot"><span class="time-label">10am</span><input type="text" placeholder=""></div>
+        <div class="time-slot"><span class="time-label">11am</span><input type="text" placeholder=""></div>
+        <div class="time-slot"><span class="time-label">12pm</span><input type="text" placeholder="lunch 🍱"></div>
+        <div class="time-slot"><span class="time-label">1pm</span><input type="text" placeholder=""></div>
+        <div class="time-slot"><span class="time-label">2pm</span><input type="text" placeholder=""></div>
+        <div class="time-slot"><span class="time-label">3pm</span><input type="text" placeholder=""></div>
+        <div class="time-slot"><span class="time-label">4pm</span><input type="text" placeholder=""></div>
+        <div class="time-slot"><span class="time-label">5pm</span><input type="text" placeholder=""></div>
+        <div class="time-slot"><span class="time-label">6pm</span><input type="text" placeholder="evening ☕"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('today-date').value = new Date().toISOString().split('T')[0];
+
+  let tasks = [];
+
+  function addTask() {
+    const input = document.getElementById('task-input');
+    const val = input.value.trim();
+    if (!val) return;
+    tasks.push({ text: val, done: false, id: Date.now() });
+    input.value = '';
+    renderTasks();
+  }
+
+  function renderTasks() {
+    const list = document.getElementById('task-list');
+    list.innerHTML = '';
+    tasks.forEach(t => {
+      const li = document.createElement('li');
+      li.className = 'task-item' + (t.done ? ' done' : '');
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = t.done;
+      cb.onchange = () => { t.done = !t.done; renderTasks(); };
+
+      const span = document.createElement('span');
+      span.textContent = t.text;
+
+      const del = document.createElement('button');
+      del.className = 'del'; del.textContent = '✕';
+      del.onclick = () => { tasks = tasks.filter(x => x.id !== t.id); renderTasks(); };
+
+      li.append(cb, span, del);
+      list.appendChild(li);
+    });
+  }
+</script>
+</body>
+</html>

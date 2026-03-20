@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../style/base.css">
+  <link rel="stylesheet" href="../style/components.css">
+  <style>
+    .add-row {
+      display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .add-row input {
+      flex: 1; min-width: 120px;
+      background: var(--tan-light);
+      border: 1.5px solid var(--tan);
+      border-radius: var(--radius-pill);
+      padding: 7px 14px;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: var(--brown);
+      outline: none;
+    }
+    .add-row input:focus { border-color: var(--accent); }
+    .music-table { width: 100%; border-collapse: collapse; }
+    .music-table thead tr {
+      background: var(--tan);
+    }
+    .music-table th {
+      font-family: var(--font-display);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--brown);
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .music-table th:first-child { border-radius: var(--radius-md) 0 0 0; width: 36px; text-align: center; }
+    .music-table th:last-child { border-radius: 0 var(--radius-md) 0 0; width: 40px; }
+    .music-table tbody tr {
+      border-bottom: 1.5px dashed var(--tan);
+      transition: background 0.15s;
+    }
+    .music-table tbody tr:hover { background: var(--tan-light); }
+    .music-table td {
+      padding: 9px 12px;
+      font-size: 0.82rem;
+      color: var(--brown);
+    }
+    .music-table td.num {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-align: center;
+    }
+    .music-table td .del {
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      font-size: 0.85rem; opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .music-table tbody tr:hover .del { opacity: 1; }
+    .del:hover { color: var(--accent); }
+    .empty-row td {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 24px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+<div class="page fade-up">
+  <a class="back-nav" href="../index.html">← back</a>
+  <div class="page-header">
+    <div>
+      <h1>🎵 Music List</h1>
+      <div class="subtitle">your personal soundtrack</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="add-row">
+      <input type="text" id="song-input" placeholder="song title..." onkeydown="if(event.key==='Enter') addSong()">
+      <input type="text" id="artist-input" placeholder="artist..." onkeydown="if(event.key==='Enter') addSong()">
+      <input type="text" id="genre-input" placeholder="genre..." onkeydown="if(event.key==='Enter') addSong()">
+      <button class="btn" onclick="addSong()">+ add</button>
+    </div>
+
+    <table class="music-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>🎵 song</th>
+          <th>🎤 artist</th>
+          <th>🎸 genre</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="music-tbody">
+        <tr class="empty-row"><td colspan="5">no songs yet — add one above ☕</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  let songs = [];
+
+  function addSong() {
+    const song = document.getElementById('song-input').value.trim();
+    const artist = document.getElementById('artist-input').value.trim();
+    const genre = document.getElementById('genre-input').value.trim();
+    if (!song) return;
+    songs.push({ song, artist, genre, id: Date.now() });
+    document.getElementById('song-input').value = '';
+    document.getElementById('artist-input').value = '';
+    document.getElementById('genre-input').value = '';
+    render();
+  }
+
+  function render() {
+    const tbody = document.getElementById('music-tbody');
+    tbody.innerHTML = '';
+    if (songs.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">no songs yet — add one above ☕</td></tr>';
+      return;
+    }
+    songs.forEach((s, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="num">${i + 1}</td>
+        <td>${s.song}</td>
+        <td>${s.artist || '—'}</td>
+        <td>${s.genre || '—'}</td>
+        <td><button class="del" onclick="deleteSong(${s.id})">✕</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function deleteSong(id) {
+    songs = songs.filter(s => s.id !== id);
+    render();
+  }
+</script>
+</body>
+</html>
