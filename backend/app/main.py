@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import todos
+from app.routers import todos, planner
 from app.database import engine
-from app import models
+from app.models.todo import Base as TodoBase
+from app.models.planner import Base as PlannerBase
 
-models.todo.Base.metadata.create_all(bind=engine)
+TodoBase.metadata.create_all(bind=engine)
+PlannerBase.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Todo API", version="1.0.0")
 
@@ -17,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(todos.router, prefix="/api/v1")
+app.include_router(planner.router, prefix="/api/v1")
 
 
 @app.get("/")
