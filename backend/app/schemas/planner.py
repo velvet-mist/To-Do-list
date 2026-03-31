@@ -65,8 +65,8 @@ class DailyStoryResponse(BaseModel):
 class SongCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     artist: str = ""
-    genre: str = ""
-
+    genre: str = ""  # stores full Spotify URL, no length limit
+ 
 class SongResponse(BaseModel):
     id: int
     title: str

@@ -43,7 +43,7 @@ class Song(Base):
     id         = Column(Integer, primary_key=True, index=True)
     title      = Column(String(255), nullable=False)
     artist     = Column(String(255), default="")
-    genre      = Column(String(100), default="")
+    genre      = Column(Text, default="")  # stores full Spotify URL
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 

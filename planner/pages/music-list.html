@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -15,6 +15,10 @@
       font-size: 0.82rem; color: var(--brown); outline: none;
     }
     .add-row input:focus { border-color: var(--accent); }
+    .song-embed { margin-bottom: 6px; }
+    .song-embed iframe { width: 100%; height: 80px; border-radius: var(--radius-md); border: none; }
+    .song-meta { font-size: 0.78rem; opacity: 0.85; }
+    .music-table th:nth-child(2) { width: 100%; }
     .music-table { width: 100%; border-collapse: collapse; }
     .music-table thead tr { background: var(--tan); }
     .music-table th {
@@ -46,15 +50,15 @@
 
   <div class="card">
     <div class="add-row">
-      <input type="text" id="song-input" placeholder="song title..." onkeydown="if(event.key==='Enter') addSong()">
-      <input type="text" id="artist-input" placeholder="artist..." onkeydown="if(event.key==='Enter') addSong()">
-      <input type="text" id="genre-input" placeholder="genre..." onkeydown="if(event.key==='Enter') addSong()">
+      <input type="url" id="spotify-input" placeholder="spotify.com/track/..." onkeydown="if(event.key==='Enter') addSong()">
+      <input type="text" id="song-input" placeholder="title (auto)" onkeydown="if(event.key==='Enter') addSong()">
+      <input type="text" id="artist-input" placeholder="artist (auto)" onkeydown="if(event.key==='Enter') addSong()">
       <button class="btn" onclick="addSong()">+ add</button>
     </div>
     <table class="music-table">
       <thead>
         <tr>
-          <th>#</th><th>🎵 song</th><th>🎤 artist</th><th>🎸 genre</th><th></th>
+          <th>#</th><th>🎵 embed</th><th>🎤 artist</th><th>🎸 genre</th><th></th>
         </tr>
       </thead>
       <tbody id="music-tbody">
@@ -73,6 +77,20 @@
     render(songs);
   }
 
+  function parseSpotifyEmbed(url) {
+    if (!url) return '';
+    try {
+      let u = url;
+      if (!url.startsWith('http')) u = 'https://' + u;
+      const parsedUrl = new URL(u);
+      const pathMatch = parsedUrl.pathname.match(/\/(track|album|playlist)\/([a-zA-Z0-9]{22})/);
+      if (pathMatch) {
+        return `https://open.spotify.com/embed/${pathMatch[1]}/${pathMatch[2]}`;
+      }
+    } catch (e) {}
+    return '';
+  }
+
   function render(songs) {
     const tbody = document.getElementById('music-tbody');
     tbody.innerHTML = '';
@@ -82,32 +100,83 @@
     }
     songs.forEach((s, i) => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td class="num">${i + 1}</td>
-        <td>${s.title}</td>
-        <td>${s.artist || '—'}</td>
-        <td>${s.genre || '—'}</td>
-        <td><button class="del" onclick="deleteSong(${s.id})">✕</button></td>
-      `;
+      const embedSrc = parseSpotifyEmbed(s.spotify_url);
+      const numTd = document.createElement('td');
+      numTd.className = 'num';
+      numTd.textContent = i + 1;
+
+      const songTd = document.createElement('td');
+      if (embedSrc) {
+        const embedDiv = document.createElement('div');
+        embedDiv.className = 'song-embed';
+        const iframe = document.createElement('iframe');
+        iframe.src = embedSrc;
+        iframe.loading = 'lazy';
+        iframe.allowFullscreen = true;
+        embedDiv.appendChild(iframe);
+
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'song-meta';
+        metaDiv.textContent = s.title;
+        embedDiv.appendChild(metaDiv);
+        songTd.appendChild(embedDiv);
+      } else {
+        songTd.textContent = s.title || '—';
+      }
+
+      const artistTd = document.createElement('td');
+      artistTd.textContent = s.artist || '—';
+
+      const genreTd = document.createElement('td');
+      genreTd.textContent = s.genre || '—';
+
+      const delTd = document.createElement('td');
+      const delBtn = document.createElement('button');
+      delBtn.className = 'del';
+      delBtn.textContent = '✕';
+      delBtn.onclick = () => deleteSong(s.id);
+      delTd.appendChild(delBtn);
+
+      tr.append(numTd, songTd, artistTd, genreTd, delTd);
       tbody.appendChild(tr);
     });
   }
 
   async function addSong() {
+    const url = document.getElementById('spotify-input').value.trim();
     const title = document.getElementById('song-input').value.trim();
-    if (!title) return;
+    const artist = document.getElementById('artist-input').value.trim();
+    const genre = document.getElementById('genre-input').value.trim();
+    if (!title && !url) return;
+
+    let postData = {
+      title: title || '',
+      artist,
+      genre: genre || '',
+      spotify_url: url
+    };
+
+    if (url && !title && !artist) {
+      // Auto-fill from Spotify oEmbed
+      try {
+        const oembedRes = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(url)}`);
+        const oembed = await oembedRes.json();
+        postData.title = oembed.title || title;
+        postData.artist = oembed.artist || artist;
+      } catch (e) {
+        console.log('oEmbed fetch failed, using manual');
+      }
+    }
+
     await fetch(`${API}/music`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title,
-        artist: document.getElementById('artist-input').value.trim(),
-        genre: document.getElementById('genre-input').value.trim()
-      })
+      body: JSON.stringify(postData)
     });
     document.getElementById('song-input').value = '';
     document.getElementById('artist-input').value = '';
     document.getElementById('genre-input').value = '';
+    document.getElementById('spotify-input').value = '';
     loadSongs();
   }
 
@@ -116,4 +185,202 @@
     loadSongs();
   }
 
-  loadSongs()</script>\n\n  <script src="../script.js" defer></script>\n</body>\n</html>
+  loadSongs()</script>  <script src="../script.js" defer></script></body></html> -->
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Music List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/base.css">
+    <link rel="stylesheet" href="../style/components.css">
+    <style>
+      .add-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+      .add-row input {
+        flex: 1; min-width: 160px; background: var(--tan-light);
+        border: 1.5px solid var(--tan); border-radius: var(--radius-pill);
+        padding: 7px 14px; font-family: var(--font-body);
+        font-size: 0.82rem; color: var(--brown); outline: none;
+      }
+      .add-row input:focus { border-color: var(--accent); }
+      .add-row input.error { border-color: #c0392b; }
+      .error-msg { font-size: 0.75rem; color: #c0392b; margin-bottom: 10px; display: none; }
+      .error-msg.show { display: block; }
+  
+      .song-list { display: flex; flex-direction: column; gap: 12px; }
+  
+      .song-card {
+        background: var(--warm-white);
+        border: 1.5px solid var(--tan);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        animation: fadeUp 0.2s ease;
+      }
+  
+      .song-card-header {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 14px;
+      }
+  
+      .song-num {
+        font-family: var(--font-display); font-size: 0.7rem;
+        font-weight: 700; color: var(--muted); width: 20px; flex-shrink: 0;
+      }
+  
+      .song-info { flex: 1; }
+      .song-title { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; color: var(--brown); }
+      .song-meta { font-size: 0.72rem; color: var(--muted); }
+  
+      .toggle-embed {
+        background: var(--tan-light); border: 1.5px solid var(--tan);
+        border-radius: var(--radius-pill); padding: 4px 12px;
+        font-family: var(--font-display); font-size: 0.7rem; font-weight: 700;
+        color: var(--brown-mid); cursor: pointer; transition: background 0.15s;
+        flex-shrink: 0;
+      }
+      .toggle-embed:hover { background: var(--tan); }
+  
+      .del {
+        background: none; border: none; color: var(--muted);
+        cursor: pointer; font-size: 0.85rem; opacity: 0;
+        transition: opacity 0.15s; flex-shrink: 0;
+      }
+      .song-card:hover .del { opacity: 1; }
+      .del:hover { color: #c0392b; }
+  
+      .embed-wrap {
+        padding: 0 14px 12px;
+        display: none;
+      }
+      .embed-wrap.open { display: block; }
+      .embed-wrap iframe {
+        width: 100%; height: 80px; border: none;
+        border-radius: var(--radius-md);
+      }
+  
+      .empty-state {
+        text-align: center; color: var(--muted);
+        font-size: 0.82rem; padding: 32px; font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+  <div class="page fade-up">
+    <a class="back-nav" href="../index.html">← back</a>
+    <div class="page-header">
+      <div>
+        <h1>🎵 Music List</h1>
+        <div class="subtitle">your personal soundtrack</div>
+      </div>
+    </div>
+  
+    <div class="card">
+      <div class="add-row">
+        <input type="text" id="title-input" placeholder="song title..." onkeydown="if(event.key==='Enter') addSong()">
+        <input type="text" id="artist-input" placeholder="artist..." onkeydown="if(event.key==='Enter') addSong()">
+        <input type="text" id="link-input" placeholder="paste spotify link..." onkeydown="if(event.key==='Enter') addSong()">
+        <button class="btn" onclick="addSong()">+ add</button>
+      </div>
+      <div class="error-msg" id="error-msg">invalid spotify link — paste a track URL like open.spotify.com/track/...</div>
+  
+      <div class="song-list" id="song-list">
+        <div class="empty-state">loading... ☕</div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const API = 'http://127.0.0.1:8000/api/v1/planner';
+  
+    function extractTrackId(url) {
+      try {
+        const match = url.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
+        return match ? match[1] : null;
+      } catch { return null; }
+    }
+  
+    async function loadSongs() {
+      const res = await fetch(`${API}/music`);
+      const songs = await res.json();
+      render(songs);
+    }
+  
+    function render(songs) {
+      const list = document.getElementById('song-list');
+      list.innerHTML = '';
+      if (!songs.length) {
+        list.innerHTML = '<div class="empty-state">no songs yet — paste a spotify link above ☕</div>';
+        return;
+      }
+      songs.forEach((s, i) => {
+        const trackId = extractTrackId(s.genre); // we store the spotify URL in the genre field
+        const card = document.createElement('div');
+        card.className = 'song-card';
+        card.innerHTML = `
+          <div class="song-card-header">
+            <span class="song-num">${i + 1}</span>
+            <div class="song-info">
+              <div class="song-title">${s.title}</div>
+              <div class="song-meta">${s.artist || ''}</div>
+            </div>
+            ${trackId ? `<button class="toggle-embed" onclick="toggleEmbed(this)">▶ play</button>` : ''}
+            <button class="del" onclick="deleteSong(${s.id})">✕</button>
+          </div>
+          ${trackId ? `
+          <div class="embed-wrap">
+            <iframe src="https://open.spotify.com/embed/track/${trackId}"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy">
+            </iframe>
+          </div>` : ''}
+        `;
+        list.appendChild(card);
+      });
+    }
+  
+    function toggleEmbed(btn) {
+      const wrap = btn.closest('.song-card').querySelector('.embed-wrap');
+      const open = wrap.classList.toggle('open');
+      btn.textContent = open ? '▼ hide' : '▶ play';
+    }
+  
+    async function addSong() {
+      const title = document.getElementById('title-input').value.trim();
+      const artist = document.getElementById('artist-input').value.trim();
+      const link = document.getElementById('link-input').value.trim();
+      const errMsg = document.getElementById('error-msg');
+      const linkInput = document.getElementById('link-input');
+  
+      if (!title) return;
+  
+      // validate link if provided
+      if (link && !extractTrackId(link)) {
+        linkInput.classList.add('error');
+        errMsg.classList.add('show');
+        return;
+      }
+      linkInput.classList.remove('error');
+      errMsg.classList.remove('show');
+  
+      // store spotify URL in the genre field (reusing existing schema)
+      await fetch(`${API}/music`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, artist, genre: link })
+      });
+  
+      document.getElementById('title-input').value = '';
+      document.getElementById('artist-input').value = '';
+      document.getElementById('link-input').value = '';
+      loadSongs();
+    }
+  
+    async function deleteSong(id) {
+      await fetch(`${API}/music/${id}`, { method: 'DELETE' });
+      loadSongs();
+    }
+  
+    loadSongs();
+  </script>
+  </body>
+  </html>
