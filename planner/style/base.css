@@ -32,9 +32,17 @@
   margin: 0;
   padding: 0;
 }
+* {
+  cursor: url('/planner/assets/cursors/before-click.png'), auto;
+}
 
-html { font-size: 15px; }
+a, button, [role="button"], input[type="checkbox"] {
+  cursor: url('/planner/assets/cursors/before-click.png'), auto;
+}
 
+a:active, button:active, [role="button"]:active, input[type="checkbox"]:active {
+  cursor: url('/planner/assets/cursors/after-click.png'), auto;
+}
 body {
   background-color: var(--cream);
   color: var(--brown);

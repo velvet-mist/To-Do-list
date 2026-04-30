@@ -28,20 +28,6 @@ const presets = {
     "--muted": "#000000",
     "wheel-colors": ["#ff8c42","#ff6b35"]
   },
-  mint: {
-    "--cream": "#98fb98",
-    "--cream-dark": "#90ee90",
-    "--cream-light": "#f0fff0",
-    "--brown": "#228b22",
-    "--brown-mid": "#32cd32",
-    "--brown-light": "#adff2f",
-    "--tan": "#f0f8f0",
-    "--tan-light": "#f5fffa",
-    "--warm-white": "#f5fffa",
-    "--accent": "#32cd32",
-    "--muted": "#000008",
-    "wheel-colors": ["#4a90e2","#357abd"]
-  },
   moss: {
     "--cream": "#d4edda",
     "--cream-dark": "#c3e6cb",
@@ -81,13 +67,27 @@ const presets = {
     "--tan-light": "#deb887",
     "--warm-white": "#f5f5dc",
     "--accent": "#b22222",
-    "--muted": "#000000",
+    "--muted": "#801111",
     "wheel-colors": ["#c71585","#b22222"]
+  },
+  dark: {
+    "--cream": "#2a1f1a",
+    "--cream-dark": "#1a1210",
+    "--cream-light": "#3d2d25",
+    "--brown": "#e8c9a0",
+    "--brown-mid": "#d4a574",
+    "--brown-light": "#c49060",
+    "--tan": "#f0d9b5",
+    "--tan-light": "#f5e6cc",
+    "--warm-white": "#1c1410",
+    "--accent": "#e8845a",
+    "--muted": "#a89080",
+    "wheel-colors": ["#e8845a", "#c4604a"]
   }
 };
 
 let currentTheme = 'cozy';
-const themeOrder = ['cozy', 'latte', 'mint', 'moss', 'lavender', 'burgundy'];
+const themeOrder = ['cozy', 'latte', 'moss', 'lavender', 'burgundy', 'dark'];
 
 function applyTheme(name) {
   console.log('🎨 Theme:', name);
@@ -111,9 +111,9 @@ function initTheme() {
   if (!document.getElementById('theme-toggle')) {
     const btn = document.createElement('button');
     btn.id = 'theme-toggle';
-    btn.style.cssText = 'position:fixed;top:20px;right:20px;z-index:10000;background:rgba(255,255,255,.98);border:2px solid #eee;border-radius:30px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 25px rgba(0,0,0,.2);backdrop-filter:blur(15px);transition:all .3s;min-width:130px;font-family:sans-serif;text-align:center;letter-spacing:.3px;';
+    btn.style.cssText = 'position:fixed;top:20px;right:20px;z-index:10000;background:rgba(230, 149, 87, 0.98);border:2px solid #eee;border-radius:30px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 25px rgba(0,0,0,.2);backdrop-filter:blur(15px);transition:all .3s;min-width:130px;font-family:sans-serif;text-align:center;letter-spacing:.3px;';
     btn.onclick = toggleTheme;
-    btn.title = 'Cycle themes (6 total: Cozy, Latte, Mint, Moss, Lavender, Burgundy)';
+btn.title = 'Cycle themes (6 total: Cozy, Latte, Moss, Lavender, Burgundy, Dark)';
     document.body.appendChild(btn);
   }
 }

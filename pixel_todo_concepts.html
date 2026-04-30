@@ -1,0 +1,384 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .pixel-root {
+    font-family: 'Press Start 2P', monospace;
+    background: #1a1a2e;
+    color: #e2e2e2;
+    padding: 20px;
+    min-height: 500px;
+    image-rendering: pixelated;
+  }
+
+  .pixel-header {
+    text-align: center;
+    font-size: 11px;
+    color: #a8ff78;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 0px #2a7a00;
+  }
+
+  .pixel-subtitle {
+    text-align: center;
+    font-size: 7px;
+    color: #7878c8;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+
+  .concepts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .concept-card {
+    border: 3px solid #444;
+    background: #16213e;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: border-color 0.1s, background 0.1s;
+    position: relative;
+  }
+
+  .concept-card::before {
+    content: '';
+    position: absolute;
+    top: -3px; left: -3px; right: -3px; bottom: -3px;
+    border: 3px solid transparent;
+    pointer-events: none;
+  }
+
+  .concept-card:hover {
+    border-color: #a8ff78;
+    background: #1c2e50;
+  }
+
+  .concept-card.active {
+    border-color: #ffde59;
+    background: #1c2a10;
+  }
+
+  .card-icon {
+    font-size: 20px;
+    margin-bottom: 10px;
+    display: block;
+    image-rendering: pixelated;
+  }
+
+  .card-title {
+    font-size: 7px;
+    color: #ffde59;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .card-desc {
+    font-size: 6px;
+    color: #9090c0;
+    line-height: 1.8;
+    letter-spacing: 0.5px;
+  }
+
+  .preview-box {
+    border: 3px solid #3a3a6a;
+    background: #0f0f1a;
+    padding: 16px;
+    margin-top: 4px;
+  }
+
+  .preview-label {
+    font-size: 6px;
+    color: #5050a0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .pixel-todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 2px solid #1e1e3e;
+    font-size: 7px;
+    color: #c0c0e0;
+  }
+
+  .pixel-checkbox {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #5050c0;
+    background: transparent;
+    display: inline-block;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .pixel-checkbox.checked {
+    background: #a8ff78;
+    border-color: #a8ff78;
+  }
+
+  .pixel-checkbox.checked::after {
+    content: '';
+    position: absolute;
+    top: 1px; left: 2px;
+    width: 6px; height: 4px;
+    border-left: 2px solid #0a2000;
+    border-bottom: 2px solid #0a2000;
+    transform: rotate(-45deg);
+  }
+
+  .todo-text.done {
+    text-decoration: line-through;
+    color: #4a4a6a;
+  }
+
+  .pixel-tag {
+    font-size: 5px;
+    padding: 2px 6px;
+    border: 1px solid;
+    margin-left: auto;
+    letter-spacing: 1px;
+  }
+
+  .tag-work { color: #78b4ff; border-color: #78b4ff; }
+  .tag-life { color: #ff78c8; border-color: #ff78c8; }
+  .tag-study { color: #ffde59; border-color: #ffde59; }
+
+  .pixel-input-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .pixel-input {
+    background: #0f0f1a;
+    border: 2px solid #3a3a6a;
+    color: #c0c0e0;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    padding: 8px 10px;
+    flex: 1;
+    outline: none;
+    letter-spacing: 1px;
+  }
+
+  .pixel-input:focus {
+    border-color: #a8ff78;
+  }
+
+  .pixel-btn {
+    background: #a8ff78;
+    border: 2px solid #2a7a00;
+    color: #0a2000;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .pixel-btn:hover {
+    background: #ffde59;
+    border-color: #a07a00;
+    color: #1a0a00;
+  }
+
+  .pixel-btn:active {
+    transform: translate(2px, 2px);
+  }
+
+  .xp-bar-wrap {
+    margin-top: 14px;
+  }
+
+  .xp-label {
+    font-size: 6px;
+    color: #7878c8;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+
+  .xp-bar {
+    height: 10px;
+    background: #1e1e3e;
+    border: 2px solid #3a3a6a;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #78b4ff 0%, #a8ff78 100%);
+    width: 65%;
+    transition: width 0.5s;
+    image-rendering: pixelated;
+  }
+
+  .xp-text {
+    font-size: 5px;
+    color: #5050a0;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .ideas-section {
+    margin-top: 20px;
+    border: 2px solid #2a2a4a;
+    padding: 14px;
+    background: #0a0a16;
+  }
+
+  .ideas-title {
+    font-size: 7px;
+    color: #a8ff78;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+
+  .idea-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 6px;
+    color: #7878c8;
+    line-height: 1.8;
+  }
+
+  .idea-bullet {
+    color: #ffde59;
+    flex-shrink: 0;
+    font-size: 8px;
+    margin-top: -1px;
+  }
+</style>
+
+<div class="pixel-root">
+  <div class="pixel-header">★ PIXEL TODO ★</div>
+  <div class="pixel-subtitle">choose your aesthetic</div>
+
+  <div class="concepts-grid">
+    <div class="concept-card active" onclick="selectConcept(this, 'rpg')">
+      <span class="card-icon">⚔️</span>
+      <div class="card-title">RPG QUEST LOG</div>
+      <div class="card-desc">Tasks as quests. XP bar. Level up when you complete todos. Boss tasks for big goals.</div>
+    </div>
+    <div class="concept-card" onclick="selectConcept(this, 'retro')">
+      <span class="card-icon">💾</span>
+      <div class="card-title">RETRO OS</div>
+      <div class="card-desc">Fake old PC desktop. Windows 95 vibe. File-folder metaphor for categories.</div>
+    </div>
+    <div class="concept-card" onclick="selectConcept(this, 'city')">
+      <span class="card-icon">🏙️</span>
+      <div class="card-title">PIXEL CITY</div>
+      <div class="card-desc">Tiny city grows as tasks are done. Buildings unlock. Day/night cycle.</div>
+    </div>
+    <div class="concept-card" onclick="selectConcept(this, 'dungeon')">
+      <span class="card-icon">🗺️</span>
+      <div class="card-title">DUNGEON MAP</div>
+      <div class="card-desc">Grid map reveals rooms when tasks finish. Treasure chests for streaks. Dark fog.</div>
+    </div>
+  </div>
+
+  <div class="preview-box">
+    <div class="preview-label">▶ LIVE PREVIEW</div>
+
+    <div id="preview-content">
+      <div class="pixel-todo-item">
+        <span class="pixel-checkbox checked"></span>
+        <span class="todo-text done">Buy potions from shop</span>
+        <span class="pixel-tag tag-life">LIFE</span>
+      </div>
+      <div class="pixel-todo-item">
+        <span class="pixel-checkbox"></span>
+        <span class="todo-text">Defeat the dragon (GRE prep)</span>
+        <span class="pixel-tag tag-study">STUDY</span>
+      </div>
+      <div class="pixel-todo-item">
+        <span class="pixel-checkbox"></span>
+        <span class="todo-text">Forge the API endpoints</span>
+        <span class="pixel-tag tag-work">WORK</span>
+      </div>
+    </div>
+
+    <div class="pixel-input-bar">
+      <input class="pixel-input" type="text" placeholder="add new quest..." id="new-todo" />
+      <button class="pixel-btn" onclick="addTodo()">+ ADD</button>
+    </div>
+
+    <div class="xp-bar-wrap">
+      <div class="xp-label">▸ PROGRESS — LVL 4</div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+      <div class="xp-text">650 / 1000 XP · 1 task completed</div>
+    </div>
+  </div>
+
+  <div class="ideas-section">
+    <div class="ideas-title">★ DESIGN IDEAS</div>
+    <div class="idea-row"><span class="idea-bullet">►</span><span>Pixel art cursor that changes based on selected "class" (warrior, mage, rogue)</span></div>
+    <div class="idea-row"><span class="idea-bullet">►</span><span>8-bit sound effects on task complete (optional toggle)</span></div>
+    <div class="idea-row"><span class="idea-bullet">►</span><span>Pixel character sprite on the side that reacts to your progress</span></div>
+    <div class="idea-row"><span class="idea-bullet">►</span><span>Color palette switcher: forest, ocean, synthwave, desert themes</span></div>
+    <div class="idea-row"><span class="idea-bullet">►</span><span>Tasks have rarity tiers: common, rare, epic, legendary</span></div>
+  </div>
+</div>
+
+<script>
+  function selectConcept(el, type) {
+    document.querySelectorAll('.concept-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+
+    const labels = {
+      rpg: ['Buy potions from shop', 'Defeat the dragon (GRE prep)', 'Forge the API endpoints'],
+      retro: ['defrag_brain.exe', 'README.md → update portfolio', 'config.ini → fix env vars'],
+      city: ['Build the bakery (meal prep)', 'Expand roads (clean inbox)', 'Open library (read chapter)'],
+      dungeon: ['Open the east gate (submit form)', 'Find the hidden scroll (research)', 'Light the brazier (deploy)']
+    };
+    const tags = ['life', 'study', 'work'];
+    const tagClasses = ['tag-life', 'tag-study', 'tag-work'];
+    const tagNames = ['LIFE', 'STUDY', 'WORK'];
+
+    const items = labels[type];
+    const html = items.map((label, i) => `
+      <div class="pixel-todo-item">
+        <span class="pixel-checkbox ${i===0?'checked':''}"></span>
+        <span class="todo-text ${i===0?'done':''}">${label}</span>
+        <span class="pixel-tag ${tagClasses[i]}">${tagNames[i]}</span>
+      </div>
+    `).join('');
+    document.getElementById('preview-content').innerHTML = html;
+  }
+
+  function addTodo() {
+    const input = document.getElementById('new-todo');
+    const val = input.value.trim();
+    if (!val) return;
+    const container = document.getElementById('preview-content');
+    const div = document.createElement('div');
+    div.className = 'pixel-todo-item';
+    div.innerHTML = `<span class="pixel-checkbox"></span><span class="todo-text">${val}</span><span class="pixel-tag tag-work">NEW</span>`;
+    container.appendChild(div);
+    input.value = '';
+
+    div.querySelector('.pixel-checkbox').addEventListener('click', function() {
+      this.classList.toggle('checked');
+      div.querySelector('.todo-text').classList.toggle('done');
+    });
+  }
+
+  document.querySelectorAll('.pixel-checkbox').forEach(cb => {
+    cb.addEventListener('click', function() {
+      this.classList.toggle('checked');
+      this.nextElementSibling.classList.toggle('done');
+    });
+  });
+</script>
